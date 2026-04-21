@@ -1,21 +1,5 @@
-import { Text, View } from "react-native";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Image
-        source={require("../assets/images/pokeball.png")}
-        style={{ width: 200, height: 200 }}
-      />
-      <Text style={{ fontSize: 24, marginTop: 20 }}>
-        Welcome to the Poke App!
-      </Text>
-    </View>
-  );
+  return <Redirect href="/pokedex" />;
 }
