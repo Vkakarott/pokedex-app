@@ -29,17 +29,20 @@ export default function FavoriteScreen() {
       ) : (
         <FlatList
           data={favorites}
+          numColumns={2}
           keyExtractor={(item) => item.name}
           contentContainerStyle={styles.listContent}
+          columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({ item }) => (
-            <FavoritePokemonCard
-              imageUrl={getPokemonImageUrl(item.url)}
-              isFavorite={isFavorite(item.name)}
-              name={item.name}
-              onToggleFavorite={() => toggleFavorite(item)}
-            />
+            <View style={styles.cardWrapper}>
+              <FavoritePokemonCard
+                imageUrl={getPokemonImageUrl(item.url)}
+                isFavorite={isFavorite(item.name)}
+                name={item.name}
+                onToggleFavorite={() => toggleFavorite(item)}
+              />
+            </View>
           )}
         />
       )}
@@ -68,9 +71,13 @@ const styles = StyleSheet.create({
   listContent: {
     paddingTop: 20,
     paddingBottom: 140,
+    gap: 14,
   },
-  separator: {
-    height: 14,
+  row: {
+    gap: 14,
+  },
+  cardWrapper: {
+    flex: 1,
   },
   feedbackContainer: {
     flex: 1,

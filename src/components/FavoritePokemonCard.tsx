@@ -67,22 +67,25 @@ export default function FavoritePokemonCard({
       <BlurView intensity={55} tint="dark" style={StyleSheet.absoluteFill} />
 
       <View style={styles.content}>
+        <View style={styles.topRow}>
+          <Text style={styles.eyebrow}>Favorito</Text>
+
+          <Pressable onPress={onToggleFavorite} style={styles.favoriteButton}>
+            <Entypo
+              name={isFavorite ? "heart" : "heart-outlined"}
+              size={18}
+              color={isFavorite ? "#DD2323" : "#F5F5F5"}
+            />
+          </Pressable>
+        </View>
+
         <View style={styles.imageWrapper}>
           <Image source={imageUrl} style={styles.image} contentFit="contain" />
         </View>
 
         <View style={styles.info}>
-          <Text style={styles.eyebrow}>Favorito</Text>
           <Text style={styles.name}>{formatPokemonName(name)}</Text>
         </View>
-
-        <Pressable onPress={onToggleFavorite} style={styles.favoriteButton}>
-          <Entypo
-            name={isFavorite ? "heart" : "heart-outlined"}
-            size={20}
-            color={isFavorite ? "#DD2323" : "#F5F5F5"}
-          />
-        </Pressable>
       </View>
     </View>
   );
@@ -91,7 +94,7 @@ export default function FavoritePokemonCard({
 const styles = StyleSheet.create({
   shell: {
     width: "100%",
-    minHeight: 108,
+    minHeight: 210,
     borderRadius: 30,
     overflow: "hidden",
     position: "relative",
@@ -108,35 +111,42 @@ const styles = StyleSheet.create({
   },
   colorGlow: {
     position: "absolute",
-    width: 180,
-    height: 180,
+    width: 160,
+    height: 160,
     borderRadius: 999,
-    top: -72,
-    right: -20,
+    top: -48,
+    right: -36,
   },
   content: {
+    flex: 1,
+    paddingTop: 14,
+    paddingBottom: 16,
+    paddingLeft: 18,
+    paddingRight: 18,
+  },
+  topRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 14,
-    paddingLeft: 20,
-    paddingRight: 14,
-    gap: 14,
+    justifyContent: "space-between",
   },
   imageWrapper: {
-    width: 74,
-    height: 74,
-    borderRadius: 22,
+    width: 100,
+    height: 100,
+    borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255, 255, 255, 0.04)",
+    alignSelf: "center",
+    marginTop: 10,
   },
   image: {
-    width: 68,
-    height: 68,
+    width: 90,
+    height: 90,
   },
   info: {
-    flex: 1,
-    gap: 6,
+    marginTop: 16,
+    alignItems: "center",
+    minHeight: 52,
   },
   eyebrow: {
     fontSize: 12,
@@ -146,13 +156,14 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
   },
   name: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "700",
     color: "#F5F5F5",
+    textAlign: "center",
   },
   favoriteButton: {
-    width: 42,
-    height: 42,
+    width: 36,
+    height: 36,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",

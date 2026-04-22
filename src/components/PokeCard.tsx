@@ -51,8 +51,8 @@ export default function PokeCard({
   }, [imageUrl]);
 
   return (
-    <View style={styles.card}>
-      <View style={[styles.colorGlow, { backgroundColor: withAlpha(accentColor, 0.55) }]} />
+    <View style={[styles.card, { backgroundColor: withAlpha(accentColor, 0.12) }]}>
+      <View style={[styles.colorGlow, { backgroundColor: withAlpha(accentColor, 1) }]} />
       <BlurView intensity={75} tint="dark" style={StyleSheet.absoluteFill} />
 
       <Pressable onPress={onToggleFavorite} style={styles.favoriteButton}>
@@ -75,7 +75,6 @@ export default function PokeCard({
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    backgroundColor: "transparent",
     borderRadius: 32,
     padding: 8,
     paddingHorizontal: 16,
@@ -103,8 +102,8 @@ const styles = StyleSheet.create({
   },
   colorGlow: {
     position: "absolute",
-    width: 300,
-    height: 120,
+    width: 340,
+    height: 100,
     borderTopRightRadius: 100,
   },
   favoriteButton: {
