@@ -14,3 +14,5 @@ export type GetPokemonListParams = {
   offset?: number;
   limit?: number;
 };
+
+export type PokemonCatalogResponse = PokemonListItem[];
