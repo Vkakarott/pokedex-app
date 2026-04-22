@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PAGE_SIZE = 20;
 const SEARCH_DELAY_MS = 450;
@@ -163,7 +164,7 @@ export default function PokedexScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       <Text style={styles.title}>Pokedex</Text>
       <Text style={styles.subtitle}>
         Busque em tempo real ou explore a lista inicial.
@@ -224,7 +225,7 @@ export default function PokedexScreen() {
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -238,7 +239,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "700",
     color: "#F5F5F5",
-    marginTop: 24,
   },
   subtitle: {
     marginTop: 8,

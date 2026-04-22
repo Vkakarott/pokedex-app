@@ -3,12 +3,13 @@ import FavoritePokemonCard from "@/src/components/FavoritePokemonCard";
 import { useFavorites } from "@/src/contexts/FavoritesContext";
 import { getPokemonImageUrl } from "@/src/utils/pokemon";
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FavoriteScreen() {
   const { favorites, isLoading } = useFavorites();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       <Text style={styles.title}>Favoritos</Text>
 
       {isLoading ? (
@@ -51,7 +52,7 @@ export default function FavoriteScreen() {
           )}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -65,7 +66,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "700",
     color: "#F5F5F5",
-    marginTop: 24,
   },
   description: {
     marginTop: 12,
