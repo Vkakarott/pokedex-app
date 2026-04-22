@@ -35,25 +35,27 @@ export default function PokemonDetailsScreen() {
   }, [params.pokemonName]);
 
   const [pokemon, setPokemon] = useState<PokemonDetailsResponse | null>(null);
-  const [accentColor, setAccentColor] = useState(DEFAULT_POKEMON_DETAILS_ACCENT);
-  const [isLoading, setIsLoading] = useState(true);
+  const [accentColor, setAccentColor] = useState<string | null>(null);
+  const [isDetailsLoading, setIsDetailsLoading] = useState(true);
+  const [isAccentLoading, setIsAccentLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadPokemonDetails() {
-      if (!pokemonName) {
-        if (isMounted) {
-          setErrorMessage("Pokemon invalido.");
-          setIsLoading(false);
-        }
+        if (!pokemonName) {
+          if (isMounted) {
+            setErrorMessage("Pokemon invalido.");
+            setIsDetailsLoading(false);
+            setIsAccentLoading(false);
+          }
         return;
       }
 
       try {
         setErrorMessage("");
-        setIsLoading(true);
+        setIsDetailsLoading(true);
 
         const response = await getPokemonDetails(pokemonName);
 
@@ -70,7 +72,7 @@ export default function PokemonDetailsScreen() {
         setErrorMessage("Nao foi possivel carregar os detalhes do pokemon.");
       } finally {
         if (isMounted) {
-          setIsLoading(false);
+          setIsDetailsLoading(false);
         }
       }
     }
@@ -94,11 +96,16 @@ export default function PokemonDetailsScreen() {
       if (!artworkUrl) {
         if (isMounted) {
           setAccentColor(DEFAULT_POKEMON_DETAILS_ACCENT);
+          setIsAccentLoading(false);
         }
         return;
       }
 
       try {
+        if (isMounted) {
+          setIsAccentLoading(true);
+        }
+
         const result = await getColors(artworkUrl, {
           fallback: DEFAULT_POKEMON_DETAILS_ACCENT,
           cache: true,
@@ -114,6 +121,10 @@ export default function PokemonDetailsScreen() {
         if (isMounted) {
           setAccentColor(DEFAULT_POKEMON_DETAILS_ACCENT);
         }
+      } finally {
+        if (isMounted) {
+          setIsAccentLoading(false);
+        }
       }
     }
 
@@ -125,6 +136,8 @@ export default function PokemonDetailsScreen() {
   }, [artworkUrl]);
 
   const isCurrentFavorite = pokemon ? isFavorite(pokemon.name) : false;
+  const screenAccentColor = accentColor ?? DEFAULT_POKEMON_DETAILS_ACCENT;
+  const isLoading = isDetailsLoading || isAccentLoading;
 
   async function handleToggleFavorite() {
     if (!pokemon) {
@@ -133,7 +146,7 @@ export default function PokemonDetailsScreen() {
 
     const favoriteItem: PokemonListItem = {
       name: pokemon.name,
-      url: `https://pokeapi.co/api/v2/pokemon/${pokemon.name}/`,
+      url: `https://pokeapi.co/api/v2/pokemon/${pokemon.id}/`,
     };
 
     await toggleFavorite(favoriteItem);
@@ -141,11 +154,11 @@ export default function PokemonDetailsScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: accentColor }]}>
+      <View style={[styles.container, { backgroundColor: "#0A0A0A" }]}>
         <View
           style={[
             styles.backgroundBloom,
-            { backgroundColor: withAlpha(accentColor, 0.3) },
+            { backgroundColor: withAlpha(DEFAULT_POKEMON_DETAILS_ACCENT, 0.18) },
           ]}
         />
         <View style={styles.backgroundVeil} />
@@ -159,11 +172,11 @@ export default function PokemonDetailsScreen() {
 
   if (errorMessage || !pokemon) {
     return (
-      <View style={[styles.container, { backgroundColor: accentColor }]}>
+      <View style={[styles.container, { backgroundColor: screenAccentColor }]}>
         <View
           style={[
             styles.backgroundBloom,
-            { backgroundColor: withAlpha(accentColor, 0.3) },
+            { backgroundColor: withAlpha(screenAccentColor, 0.3) },
           ]}
         />
         <View style={styles.backgroundVeil} />
@@ -175,11 +188,11 @@ export default function PokemonDetailsScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: accentColor }]}>
+    <View style={[styles.container, { backgroundColor: screenAccentColor }]}>
       <View
         style={[
           styles.backgroundBloom,
-          { backgroundColor: withAlpha(accentColor, 0.3) },
+          { backgroundColor: withAlpha(screenAccentColor, 0.3) },
         ]}
       />
       <View style={styles.backgroundVeil} />
