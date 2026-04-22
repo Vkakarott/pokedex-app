@@ -66,7 +66,9 @@ export default function FavoritePokemonCard({
         />
         <View style={styles.content}>
           <View style={styles.footerRow}>
-            <Text style={styles.name}>{formatPokemonName(name)}</Text>
+            <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
+              {formatPokemonName(name)}
+            </Text>
 
             <Pressable onPress={onToggleFavorite} style={styles.actionButton}>
               <AntDesign name="right-circle" size={22} color="#F5F5F5" />
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
     top: 50,
     bottom: 10,
     borderRadius: 28,
-    opacity: 0.9,
+    opacity: 0.7,
   },
   card: {
     flex: 1,
@@ -110,14 +112,12 @@ const styles = StyleSheet.create({
     right: -24,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    paddingTop: 74,
+    paddingHorizontal: 14,
   },
   image: {
     position: "absolute",
     top: 0,
-    left: "50%",
+    left: "60%",
     width: 118,
     height: 118,
     marginLeft: -59,

@@ -8,7 +8,7 @@ import { createCurvedTabBarPath } from "../../utils/navigation/createCurvedTabBa
 
 const ACTIVE_COLOR = "#DD2323";
 const INACTIVE_COLOR = "rgba(245, 245, 245, 0.58)";
-const BAR_FILL = "rgba(25, 25, 25, 0.71)";
+const BAR_FILL = "rgba(17, 17, 17, 0.85)";
 const BAR_STROKE = "rgba(255, 255, 255, 0.08)";
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     bottom: 4,
     height: 78,
     borderRadius: 30,
-    backgroundColor: "rgba(0, 0, 0, 0.16)",
+    backgroundColor: "rgba(0, 0, 0, 0.09)",
     shadowColor: "#000000",
     shadowOpacity: 0.22,
     shadowRadius: 18,
