@@ -52,39 +52,39 @@ export default function FavoritePokemonCard({
 
   return (
     <View style={styles.shell}>
-      <View
-        style={[
-          styles.accentBar,
-          { backgroundColor: withAlpha(accentColor, 0.95) },
-        ]}
-      />
-      <View
-        style={[
-          styles.colorGlow,
-          { backgroundColor: withAlpha(accentColor, 0.28) },
-        ]}
-      />
-      <BlurView intensity={55} tint="dark" style={StyleSheet.absoluteFill} />
+      <Image source={imageUrl} style={styles.image} contentFit="contain" />
 
-      <View style={styles.content}>
-        <View style={styles.topRow}>
-          <Text style={styles.eyebrow}>Favorito</Text>
+      <View style={styles.card}>
+        <View
+          style={[
+            styles.accentBar,
+            { backgroundColor: withAlpha(accentColor, 0.95) },
+          ]}
+        />
+        <View
+          style={[
+            styles.colorGlow,
+            { backgroundColor: withAlpha(accentColor, 0.28) },
+          ]}
+        />
+        <BlurView intensity={55} tint="dark" style={StyleSheet.absoluteFill} />
 
-          <Pressable onPress={onToggleFavorite} style={styles.favoriteButton}>
-            <Entypo
-              name={isFavorite ? "heart" : "heart-outlined"}
-              size={18}
-              color={isFavorite ? "#DD2323" : "#F5F5F5"}
-            />
-          </Pressable>
-        </View>
+        <View style={styles.content}>
+          <View style={styles.topRow}>
+            <Text style={styles.eyebrow}>Favorito</Text>
 
-        <View style={styles.imageWrapper}>
-          <Image source={imageUrl} style={styles.image} contentFit="contain" />
-        </View>
+            <Pressable onPress={onToggleFavorite} style={styles.favoriteButton}>
+              <Entypo
+                name={isFavorite ? "heart" : "heart-outlined"}
+                size={18}
+                color={isFavorite ? "#DD2323" : "#F5F5F5"}
+              />
+            </Pressable>
+          </View>
 
-        <View style={styles.info}>
-          <Text style={styles.name}>{formatPokemonName(name)}</Text>
+          <View style={styles.info}>
+            <Text style={styles.name}>{formatPokemonName(name)}</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -94,8 +94,13 @@ export default function FavoritePokemonCard({
 const styles = StyleSheet.create({
   shell: {
     width: "100%",
-    minHeight: 210,
-    borderRadius: 30,
+    minHeight: 220,
+    position: "relative",
+    paddingTop: 34,
+  },
+  card: {
+    flex: 1,
+    borderRadius: 24,
     overflow: "hidden",
     position: "relative",
     backgroundColor: "rgba(18, 18, 18, 0.82)",
@@ -105,7 +110,7 @@ const styles = StyleSheet.create({
   accentBar: {
     position: "absolute",
     left: 0,
-    top: 0,
+    top: 28,
     bottom: 0,
     width: 6,
   },
@@ -114,12 +119,12 @@ const styles = StyleSheet.create({
     width: 160,
     height: 160,
     borderRadius: 999,
-    top: -48,
+    top: -38,
     right: -36,
   },
   content: {
     flex: 1,
-    paddingTop: 14,
+    paddingTop: 64,
     paddingBottom: 16,
     paddingLeft: 18,
     paddingRight: 18,
@@ -129,22 +134,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  imageWrapper: {
-    width: 100,
-    height: 100,
-    borderRadius: 28,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
-    alignSelf: "center",
-    marginTop: 10,
-  },
   image: {
-    width: 90,
-    height: 90,
+    position: "absolute",
+    top: 0,
+    left: "50%",
+    width: 118,
+    height: 118,
+    marginLeft: -59,
+    zIndex: 2,
   },
   info: {
-    marginTop: 16,
+    marginTop: 14,
     alignItems: "center",
     minHeight: 52,
   },
