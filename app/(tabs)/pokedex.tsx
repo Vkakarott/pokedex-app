@@ -165,11 +165,6 @@ export default function PokedexScreen() {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      <Text style={styles.title}>Pokedex</Text>
-      <Text style={styles.subtitle}>
-        Busque em tempo real ou explore a lista inicial.
-      </Text>
-
       <InputSearch value={query} onChangeText={setQuery} />
 
       {trimmedQuery.length === 1 ? (
@@ -234,17 +229,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: "#0a0a0a",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#F5F5F5",
-  },
-  subtitle: {
-    marginTop: 8,
-    marginBottom: 20,
-    fontSize: 16,
-    color: "#9CA3AF",
   },
   helperText: {
     marginTop: 12,

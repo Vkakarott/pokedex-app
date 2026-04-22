@@ -10,7 +10,6 @@ import {
   formatPokemonName,
   formatStatName,
   pickDominantColor,
-  withAlpha,
 } from "@/src/utils/pokemon-details";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -155,12 +154,6 @@ export default function PokemonDetailsScreen() {
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: "#0A0A0A" }]}>
-        <View
-          style={[
-            styles.backgroundBloom,
-            { backgroundColor: withAlpha(DEFAULT_POKEMON_DETAILS_ACCENT, 0.18) },
-          ]}
-        />
         <View style={styles.backgroundVeil} />
         <View style={styles.feedbackContainer}>
           <ActivityIndicator color="#F5F5F5" />
@@ -173,12 +166,6 @@ export default function PokemonDetailsScreen() {
   if (errorMessage || !pokemon) {
     return (
       <View style={[styles.container, { backgroundColor: screenAccentColor }]}>
-        <View
-          style={[
-            styles.backgroundBloom,
-            { backgroundColor: withAlpha(screenAccentColor, 0.3) },
-          ]}
-        />
         <View style={styles.backgroundVeil} />
         <View style={styles.feedbackContainer}>
           <Text style={styles.errorText}>{errorMessage || "Pokemon nao encontrado."}</Text>
@@ -189,12 +176,6 @@ export default function PokemonDetailsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: screenAccentColor }]}>
-      <View
-        style={[
-          styles.backgroundBloom,
-          { backgroundColor: withAlpha(screenAccentColor, 0.3) },
-        ]}
-      />
       <View style={styles.backgroundVeil} />
 
       <PokemonDetailsHeader
@@ -275,15 +256,6 @@ export default function PokemonDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  backgroundBloom: {
-    position: "absolute",
-    width: 320,
-    height: 320,
-    borderRadius: 999,
-    top: 130,
-    left: "50%",
-    marginLeft: -160,
   },
   backgroundVeil: {
     ...StyleSheet.absoluteFillObject,

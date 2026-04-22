@@ -61,7 +61,7 @@ export default function FavoritePokemonCard({
         <View
           style={[
             styles.innerGlow,
-            { backgroundColor: withAlpha(accentColor, 0.55), shadowColor: withAlpha(accentColor, 0.95) },
+            { backgroundColor: withAlpha(accentColor, 0.55) },
           ]}
         />
         <View style={styles.content}>
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     top: -52,
     right: -24,
+    shadowColor: "#fff",
     shadowOpacity: 0.3,
     shadowRadius: 18,
     shadowOffset: {
