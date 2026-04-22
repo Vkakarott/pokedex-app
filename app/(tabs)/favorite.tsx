@@ -1,7 +1,7 @@
 import PokeCard from "@/src/components/PokeCard";
 import { useFavorites } from "@/src/contexts/FavoritesContext";
-import { getPokemonIdFromUrl, getPokemonImageUrl } from "@/src/utils/pokemon";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import { getPokemonImageUrl } from "@/src/utils/pokemon";
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 export default function FavoriteScreen() {
   const { favorites, isFavorite, isLoading, toggleFavorite } = useFavorites();
@@ -15,6 +15,17 @@ export default function FavoriteScreen() {
           <ActivityIndicator color="#DD2323" />
           <Text style={styles.description}>Carregando favoritos...</Text>
         </View>
+      ) : favorites.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Image
+            source={require("../../assets/images/charizard.png")}
+            style={styles.emptyImage}
+            resizeMode="contain"
+          />
+          <Text style={styles.description}>
+            Adicione aqui seus Pokemons favoritos.
+          </Text>
+        </View>
       ) : (
         <FlatList
           data={favorites}
@@ -22,16 +33,8 @@ export default function FavoriteScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-          ListEmptyComponent={
-            <View style={styles.feedbackContainer}>
-              <Text style={styles.description}>
-                Nenhum pokemon favoritado ainda.
-              </Text>
-            </View>
-          }
           renderItem={({ item }) => (
             <PokeCard
-              id={getPokemonIdFromUrl(item.url)}
               imageUrl={getPokemonImageUrl(item.url)}
               isFavorite={isFavorite(item.name)}
               name={item.name}
@@ -73,5 +76,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyImage: {
+    width: 170,
+    height: 170,
   },
 });

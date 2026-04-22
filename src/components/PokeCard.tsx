@@ -6,7 +6,6 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { getColors } from "react-native-image-colors";
 
 type PokeCardProps = {
-  id: number;
   imageUrl: string;
   isFavorite: boolean;
   name: string;
@@ -14,7 +13,6 @@ type PokeCardProps = {
 };
 
 export default function PokeCard({
-  id,
   imageUrl,
   isFavorite,
   name,
@@ -54,9 +52,8 @@ export default function PokeCard({
 
   return (
     <View style={styles.card}>
-      <View style={[styles.colorGlow, { backgroundColor: withAlpha(accentColor, 0.45) }]} />
-      <View style={[styles.colorGlowSecondary, { backgroundColor: withAlpha(accentColor, 0.1) }]} />
-      <BlurView intensity={45} tint="dark" style={StyleSheet.absoluteFill} />
+      <View style={[styles.colorGlow, { backgroundColor: withAlpha(accentColor, 0.55) }]} />
+      <BlurView intensity={75} tint="dark" style={StyleSheet.absoluteFill} />
 
       <Pressable onPress={onToggleFavorite} style={styles.favoriteButton}>
         <Entypo
@@ -67,7 +64,6 @@ export default function PokeCard({
       </Pressable>
 
       <View style={styles.info}>
-        <Text style={styles.badge}>#{String(id).padStart(3, "0")}</Text>
         <Text style={styles.name}>{formatPokemonName(name)}</Text>
       </View>
 
@@ -95,15 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 6,
     zIndex: 1,
-  },
-  badge: {
-    alignSelf: "flex-start",
-    fontSize: 12,
-    color: "#D1D5DB",
-    backgroundColor: "rgba(18, 18, 18, 0.66)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
+    paddingLeft: 46,
   },
   name: {
     fontSize: 22,
@@ -117,24 +105,14 @@ const styles = StyleSheet.create({
   },
   colorGlow: {
     position: "absolute",
-    width: 220,
-    height: 180,
-    borderRadius: 999,
-    top: -66,
-    right: -52,
-  },
-  colorGlowSecondary: {
-    position: "absolute",
-    width: 170,
-    height: 170,
-    borderRadius: 999,
-    bottom: -60,
-    left: -32,
+    width: 300,
+    height: 120,
+    borderTopRightRadius: 100,
   },
   favoriteButton: {
     position: "absolute",
     top: 12,
-    right: 12,
+    left: 12,
     width: 38,
     height: 38,
     borderRadius: 999,

@@ -4,7 +4,7 @@ import { PokemonListItem } from "@/src/api/types";
 import InputSearch from "@/src/components/InputSearch";
 import PokeCard from "@/src/components/PokeCard";
 import { useFavorites } from "@/src/contexts/FavoritesContext";
-import { getPokemonIdFromUrl, getPokemonImageUrl } from "@/src/utils/pokemon";
+import { getPokemonImageUrl } from "@/src/utils/pokemon";
 import {
   ActivityIndicator,
   FlatList,
@@ -208,7 +208,6 @@ export default function PokedexScreen() {
           }
           renderItem={({ item }) => (
             <PokeCard
-              id={getPokemonIdFromUrl(item.url)}
               imageUrl={getPokemonImageUrl(item.url)}
               isFavorite={isFavorite(item.name)}
               name={item.name}
