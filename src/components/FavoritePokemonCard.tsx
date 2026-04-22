@@ -7,13 +7,13 @@ import { getColors } from "react-native-image-colors";
 type FavoritePokemonCardProps = {
   imageUrl: string;
   name: string;
-  onToggleFavorite: () => void;
+  onPressDetails: () => void;
 };
 
 export default function FavoritePokemonCard({
   imageUrl,
   name,
-  onToggleFavorite,
+  onPressDetails,
 }: FavoritePokemonCardProps) {
   const [accentColor, setAccentColor] = useState("#2A2A2A");
 
@@ -61,7 +61,7 @@ export default function FavoritePokemonCard({
         <View
           style={[
             styles.innerGlow,
-            { backgroundColor: withAlpha(accentColor, 0.55) },
+            { backgroundColor: withAlpha(accentColor, 0.55), shadowColor: withAlpha(accentColor, 0.95) },
           ]}
         />
         <View style={styles.content}>
@@ -70,7 +70,7 @@ export default function FavoritePokemonCard({
               {formatPokemonName(name)}
             </Text>
 
-            <Pressable onPress={onToggleFavorite} style={styles.actionButton}>
+            <Pressable onPress={onPressDetails} style={styles.actionButton}>
               <AntDesign name="right-circle" size={22} color="#F5F5F5" />
             </Pressable>
           </View>
@@ -110,6 +110,12 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     top: -52,
     right: -24,
+    shadowOpacity: 0.3,
+    shadowRadius: 18,
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
   },
   content: {
     paddingHorizontal: 14,

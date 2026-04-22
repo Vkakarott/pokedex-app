@@ -1,10 +1,11 @@
+import { router } from "expo-router";
 import FavoritePokemonCard from "@/src/components/FavoritePokemonCard";
 import { useFavorites } from "@/src/contexts/FavoritesContext";
 import { getPokemonImageUrl } from "@/src/utils/pokemon";
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 export default function FavoriteScreen() {
-  const { favorites, isLoading, toggleFavorite } = useFavorites();
+  const { favorites, isLoading } = useFavorites();
 
   return (
     <View style={styles.container}>
@@ -39,7 +40,12 @@ export default function FavoriteScreen() {
               <FavoritePokemonCard
                 imageUrl={getPokemonImageUrl(item.url)}
                 name={item.name}
-                onToggleFavorite={() => toggleFavorite(item)}
+                onPressDetails={() =>
+                  router.push({
+                    pathname: "/pokemon/[pokemonName]",
+                    params: { pokemonName: item.name },
+                  })
+                }
               />
             </View>
           )}
