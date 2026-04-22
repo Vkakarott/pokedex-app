@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   cardWrapper: {
-    flex: 1,
+    width: "48%",
   },
   feedbackContainer: {
     flex: 1,
