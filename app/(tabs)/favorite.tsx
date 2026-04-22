@@ -1,11 +1,16 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, Image, View } from "react-native";
 
 export default function FavoriteScreen() {
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../../assets/images/sharizard.png")}
+        style={{ width: 170, height: 170 }}
+        resizeMode="contain"
+      />
       <Text style={styles.title}>Favoritos</Text>
       <Text style={styles.description}>
-        Estrutura inicial da tela de favoritos.
+        Adicione aqui seus Pokemons favoritos.
       </Text>
     </View>
   );
@@ -17,7 +22,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-    backgroundColor: "#141414",
+    backgroundColor: "#0a0a0a",
   },
   title: {
     fontSize: 28,
