@@ -14,8 +14,9 @@ import {
   View,
 } from "react-native";
 import { getColors } from "react-native-image-colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const DEFAULT_ACCENT = "#C96A95";
+const DEFAULT_ACCENT = "#f03232";
 
 export default function PokemonDetailsScreen() {
   const router = useRouter();
@@ -153,23 +154,25 @@ export default function PokemonDetailsScreen() {
         </View>
       ) : (
         <>
-          <View style={styles.header}>
-            <Pressable onPress={() => router.back()} style={styles.headerButton}>
-              <AntDesign name="arrow-left" size={24} color="#F5F5F5" />
-            </Pressable>
+          <SafeAreaView edges={["top"]} style={styles.safeHeader}>
+            <View style={styles.header}>
+              <Pressable onPress={() => router.back()} style={styles.headerButton}>
+                <AntDesign name="arrow-left" size={24} color="#F5F5F5" />
+              </Pressable>
 
-            <Text style={styles.headerTitle} numberOfLines={1}>
-              {formatPokemonName(pokemon.name)}
-            </Text>
+              <Text style={styles.headerTitle} numberOfLines={1}>
+                {formatPokemonName(pokemon.name)}
+              </Text>
 
-            <Pressable onPress={handleToggleFavorite} style={styles.headerButton}>
-              <Entypo
-                name={isCurrentFavorite ? "heart" : "heart-outlined"}
-                size={24}
-                color="#F5F5F5"
-              />
-            </Pressable>
-          </View>
+              <Pressable onPress={handleToggleFavorite} style={styles.headerButton}>
+                <Entypo
+                  name={isCurrentFavorite ? "heart" : "heart-outlined"}
+                  size={24}
+                  color="#F5F5F5"
+                />
+              </Pressable>
+            </View>
+          </SafeAreaView>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -339,16 +342,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.12)",
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+    paddingTop: 8,
+  },
+  safeHeader: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     zIndex: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 24,
-    paddingTop: 64,
   },
   headerButton: {
     width: 42,
