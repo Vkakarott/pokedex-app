@@ -51,17 +51,24 @@ export default function FavoritePokemonCard({
     <View style={styles.shell}>
       <View
         style={[
-          styles.backgroundGlow,
-          { backgroundColor: withAlpha(accentColor, 0.34) },
+          styles.backgroundGlowPrimary,
+          { backgroundColor: withAlpha(accentColor, 0.18) },
+        ]}
+      />
+      <View
+        style={[
+          styles.backgroundGlowSecondary,
+          { backgroundColor: withAlpha(accentColor, 0.12) },
         ]}
       />
       <Image source={imageUrl} style={styles.image} contentFit="contain" />
 
-      <View style={[styles.card, { backgroundColor: withAlpha(accentColor, 0.9) }]}>
+      <View style={[styles.card, { backgroundColor: withAlpha(accentColor, 0.82) }]}>
+        <View style={styles.cardVeil} />
         <View
           style={[
             styles.innerGlow,
-            { backgroundColor: withAlpha(accentColor, 0.55) },
+            { backgroundColor: withAlpha(accentColor, 0.22) },
           ]}
         />
         <View style={styles.content}>
@@ -85,13 +92,24 @@ const styles = StyleSheet.create({
     position: "relative",
     paddingTop: 34,
   },
-  backgroundGlow: {
+  backgroundGlowPrimary: {
     position: "absolute",
-    left: 14,
-    right: 14,
-    top: 50,
-    bottom: 10,
-    borderRadius: 28,
+    width: 180,
+    height: 180,
+    borderRadius: 999,
+    top: 54,
+    left: "50%",
+    marginLeft: -90,
+    opacity: 0.95,
+  },
+  backgroundGlowSecondary: {
+    position: "absolute",
+    width: 230,
+    height: 230,
+    borderRadius: 999,
+    top: 34,
+    left: "50%",
+    marginLeft: -115,
     opacity: 0.9,
   },
   card: {
@@ -101,13 +119,17 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
   },
+  cardVeil: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(12, 12, 12, 0.14)",
+  },
   innerGlow: {
     position: "absolute",
-    width: 180,
-    height: 180,
+    width: 220,
+    height: 220,
     borderRadius: 999,
-    top: -52,
-    right: -24,
+    top: -82,
+    right: -42,
   },
   content: {
     paddingHorizontal: 16,
