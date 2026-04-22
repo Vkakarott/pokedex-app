@@ -75,10 +75,8 @@ export default function PokeCard({
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    backgroundColor: "#141414",
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "#202020",
+    backgroundColor: "transparent",
+    borderRadius: 32,
     padding: 8,
     paddingHorizontal: 16,
     flexDirection: "row",
