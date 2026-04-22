@@ -3,6 +3,8 @@ import { getPokemonList } from "@/src/api/get-list";
 import { PokemonListItem } from "@/src/api/types";
 import InputSearch from "@/src/components/InputSearch";
 import PokeCard from "@/src/components/PokeCard";
+import { useFavorites } from "@/src/contexts/FavoritesContext";
+import { getPokemonIdFromUrl, getPokemonImageUrl } from "@/src/utils/pokemon";
 import {
   ActivityIndicator,
   FlatList,
@@ -10,13 +12,13 @@ import {
   Text,
   View,
 } from "react-native";
-
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const PAGE_SIZE = 20;
 const SEARCH_DELAY_MS = 450;
 
 export default function PokedexScreen() {
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [pokemonList, setPokemonList] = useState<PokemonListItem[]>([]);
@@ -208,7 +210,9 @@ export default function PokedexScreen() {
             <PokeCard
               id={getPokemonIdFromUrl(item.url)}
               imageUrl={getPokemonImageUrl(item.url)}
+              isFavorite={isFavorite(item.name)}
               name={item.name}
+              onToggleFavorite={() => toggleFavorite(item)}
             />
           )}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -275,16 +279,3 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
   },
 });
-
-function getPokemonIdFromUrl(url: string) {
-  const segments = url.split("/").filter(Boolean);
-  const id = segments[segments.length - 1];
-
-  return Number(id);
-}
-
-function getPokemonImageUrl(url: string) {
-  const id = getPokemonIdFromUrl(url);
-
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-}

@@ -1,5 +1,10 @@
 import { Stack } from "expo-router";
+import { FavoritesProvider } from "@/src/contexts/FavoritesContext";
 
 export default function RootLayout() {
-  return <Stack screenOptions={{ headerShown: false }}/>;
+  return (
+    <FavoritesProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </FavoritesProvider>
+  );
 }
