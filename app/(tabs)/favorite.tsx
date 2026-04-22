@@ -1,4 +1,4 @@
-import PokeCard from "@/src/components/PokeCard";
+import FavoritePokemonCard from "@/src/components/FavoritePokemonCard";
 import { useFavorites } from "@/src/contexts/FavoritesContext";
 import { getPokemonImageUrl } from "@/src/utils/pokemon";
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from "react-native";
@@ -34,7 +34,7 @@ export default function FavoriteScreen() {
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({ item }) => (
-            <PokeCard
+            <FavoritePokemonCard
               imageUrl={getPokemonImageUrl(item.url)}
               isFavorite={isFavorite(item.name)}
               name={item.name}
