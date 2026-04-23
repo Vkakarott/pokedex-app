@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -66,30 +67,28 @@ export default function MapScreen() {
         style={StyleSheet.absoluteFill}
         userInterfaceStyle="dark"
       >
-        <Marker
-          coordinate={currentLocation}
-          pinColor="#DD2323"
-          title="Voce esta aqui"
-        />
-
         {pins.map((pin, index) => (
           <Marker
             key={pin.id}
+            anchor={{ x: 0.5, y: 1 }}
             coordinate={pin}
-            pinColor={pin.id === selectedPinId ? "#DD2323" : "#FBBF24"}
             title={`Pokemon selvagem ${index + 1}`}
-          />
+          >
+            <View
+              style={[
+                styles.pinContainer,
+                pin.id === selectedPinId && styles.pinContainerSelected,
+              ]}
+            >
+              <Image
+                source={require("../../assets/images/pin.png")}
+                style={styles.pinImage}
+                contentFit="contain"
+              />
+            </View>
+          </Marker>
         ))}
       </MapView>
-
-      <SafeAreaView edges={["top"]} pointerEvents="box-none" style={styles.overlay}>
-        <View style={styles.panel}>
-          <Text style={styles.title}>Mapa</Text>
-          <Text style={styles.description}>
-            A aba foca em um pin aleatorio sempre que voce retorna para ela.
-          </Text>
-        </View>
-      </SafeAreaView>
     </View>
   );
 }
@@ -98,18 +97,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0a0a0a",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    paddingHorizontal: 20,
-  },
-  panel: {
-    gap: 6,
-    padding: 16,
-    borderRadius: 24,
-    backgroundColor: "rgba(10, 10, 10, 0.78)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
   },
   feedbackContainer: {
     flex: 1,
@@ -123,11 +110,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     color: "#F5F5F5",
-  },
-  description: {
-    fontSize: 13,
-    lineHeight: 18,
-    color: "#D1D5DB",
   },
   feedbackText: {
     fontSize: 15,
@@ -146,5 +128,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: "#F5F5F5",
+  },
+  pinContainer: {
+    width: 44,
+    height: 54,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pinContainerSelected: {
+    transform: [{ scale: 1.16 }],
+  },
+  pinImage: {
+    width: "100%",
+    height: "100%",
   },
 });
