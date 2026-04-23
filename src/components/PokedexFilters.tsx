@@ -1,11 +1,8 @@
 import { NamedApiResource } from "@/src/api/types";
+import { useState } from "react";
 import { ScrollView, Pressable, StyleSheet, Text, View } from "react-native";
 
-export type PokedexOrderOption =
-  | "id-asc"
-  | "id-desc"
-  | "name-asc"
-  | "name-desc";
+export type PokedexOrderOption = "name-asc" | "name-desc";
 
 type PokedexFiltersProps = {
   generationOptions: NamedApiResource[];
@@ -19,8 +16,6 @@ type PokedexFiltersProps = {
 };
 
 const ORDER_OPTIONS: { label: string; value: PokedexOrderOption }[] = [
-  { label: "Menor ID", value: "id-asc" },
-  { label: "Maior ID", value: "id-desc" },
   { label: "A-Z", value: "name-asc" },
   { label: "Z-A", value: "name-desc" },
 ];
@@ -35,35 +30,58 @@ export default function PokedexFilters({
   selectedType,
   typeOptions,
 }: PokedexFiltersProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const hasActiveFilters =
+    Boolean(selectedType) ||
+    Boolean(selectedGeneration) ||
+    selectedOrder !== "name-asc";
+
   return (
     <View style={styles.container}>
-      <FilterRow
-        label="Tipo"
-        options={typeOptions.map((item) => ({
-          label: formatPokemonLabel(item.name),
-          value: item.name,
-        }))}
-        selectedValue={selectedType}
-        onSelect={onSelectType}
-      />
+      <Pressable
+        onPress={() => setIsExpanded((current) => !current)}
+        style={styles.header}
+      >
+        <Text style={styles.headerTitle}>Filtros</Text>
+        <View style={styles.headerMeta}>
+          {hasActiveFilters ? <View style={styles.activeDot} /> : null}
+          <Text style={styles.headerAction}>
+            {isExpanded ? "Ocultar" : "Mostrar"}
+          </Text>
+        </View>
+      </Pressable>
 
-      <FilterRow
-        label="Generation"
-        options={generationOptions.map((item) => ({
-          label: formatGenerationLabel(item.name),
-          value: item.name,
-        }))}
-        selectedValue={selectedGeneration}
-        onSelect={onSelectGeneration}
-      />
+      {isExpanded ? (
+        <View style={styles.panel}>
+          <FilterRow
+            label="Tipo"
+            options={typeOptions.map((item) => ({
+              label: formatPokemonLabel(item.name),
+              value: item.name,
+            }))}
+            selectedValue={selectedType}
+            onSelect={onSelectType}
+          />
 
-      <FilterRow
-        label="Ordenar"
-        options={ORDER_OPTIONS}
-        selectedValue={selectedOrder}
-        onSelect={(value) => onSelectOrder(value as PokedexOrderOption)}
-        allowClear={false}
-      />
+          <FilterRow
+            label="Generation"
+            options={generationOptions.map((item) => ({
+              label: formatGenerationLabel(item.name),
+              value: item.name,
+            }))}
+            selectedValue={selectedGeneration}
+            onSelect={onSelectGeneration}
+          />
+
+          <FilterRow
+            label="Ordenar"
+            options={ORDER_OPTIONS}
+            selectedValue={selectedOrder}
+            onSelect={(value) => onSelectOrder(value as PokedexOrderOption)}
+            allowClear={false}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -154,6 +172,41 @@ function formatGenerationLabel(value: string) {
 const styles = StyleSheet.create({
   container: {
     marginTop: 18,
+    gap: 12,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: "#111111",
+    borderWidth: 1,
+    borderColor: "#1F1F1F",
+  },
+  headerTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#F5F5F5",
+  },
+  headerMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  activeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#DD2323",
+  },
+  headerAction: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#9CA3AF",
+  },
+  panel: {
     gap: 14,
   },
   group: {

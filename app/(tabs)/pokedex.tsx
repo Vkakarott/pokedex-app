@@ -26,7 +26,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const PAGE_SIZE = 20;
 const SEARCH_DELAY_MS = 450;
-const DEFAULT_ORDER: PokedexOrderOption = "id-asc";
+const DEFAULT_ORDER: PokedexOrderOption = "name-asc";
 
 export default function PokedexScreen() {
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -340,19 +340,13 @@ function comparePokemon(
   next: PokemonListItem,
   order: PokedexOrderOption
 ) {
-  const currentId = getPokemonIdFromUrl(current.url);
-  const nextId = getPokemonIdFromUrl(next.url);
-
   switch (order) {
-    case "id-desc":
-      return nextId - currentId;
     case "name-asc":
       return current.name.localeCompare(next.name);
     case "name-desc":
       return next.name.localeCompare(current.name);
-    case "id-asc":
     default:
-      return currentId - nextId;
+      return current.name.localeCompare(next.name);
   }
 }
 
