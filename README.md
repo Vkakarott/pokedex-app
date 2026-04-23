@@ -102,6 +102,19 @@ O aplicativo consome a [PokéAPI v2](https://pokeapi.co/api/v2) — pública e s
 
 ---
 
+## Decisões técnicas
+
+> Substitua cada item abaixo pela sua justificativa real.
+
+- **Expo Router (file-based routing):** ...
+- **Axios:** ...
+- **AsyncStorage para favoritos:** ...
+- **react-native-maps + expo-location:** ...
+- **react-native-image-colors + expo-blur:** ...
+- **Arquitetura por feature (`src/features/`):** ...
+
+---
+
 ## Lint
 
 ```bash
