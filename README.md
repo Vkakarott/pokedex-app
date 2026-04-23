@@ -1,50 +1,109 @@
-# Welcome to your Expo app 👋
+# PokeBox
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile desenvolvido com **Expo** e **React Native** para explorar o universo Pokémon. Permite navegar pela Pokédex completa, pesquisar e filtrar Pokémon, salvar favoritos e visualizar Pokémon próximos no mapa usando a localização do dispositivo.
 
-## Get started
+---
 
-1. Install dependencies
+## Funcionalidades
 
-   ```bash
-   npm install
-   ```
+- **Pokédex** — listagem paginada de todos os Pokémon com carregamento incremental
+- **Pesquisa e Filtros** — busca por nome, filtro por tipo e geração, ordenação por nome ou ID
+- **Detalhes do Pokémon** — estatísticas, habilidades, tipos, altura e peso
+- **Favoritos** — marque Pokémon favoritos com persistência local via AsyncStorage
+- **Mapa** — visualize Pokémon distribuídos aleatoriamente no mapa ao redor da sua localização atual
+- **UI customizada** — barra de navegação com efeito curvo e glassmorphism
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## Tecnologias
 
-In the output, you'll find options to open the app in a
+| Categoria | Biblioteca |
+|---|---|
+| Framework | Expo ~54 / React Native 0.81 |
+| Roteamento | Expo Router ~6 (file-based) |
+| HTTP | Axios ~1.15 |
+| Armazenamento local | @react-native-async-storage/async-storage |
+| Mapas | react-native-maps |
+| Localização | expo-location |
+| Animações | react-native-reanimated |
+| Imagens | expo-image + react-native-image-colors |
+| Efeitos visuais | expo-blur |
+| Linguagem | TypeScript ~5.9 (strict) |
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Pré-requisitos
 
-## Get a fresh project
+- **Node.js** 18 ou superior
+- **npm** ou **yarn**
+- iOS: **Xcode** com simulador configurado
+- Android: **Android Studio** com emulador configurado
 
-When you're ready, run:
+---
+
+## Instalação e execução
+
+### 1. Instalar dependências
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Gerar os projetos nativos
 
-## Learn more
+```bash
+npx expo prebuild
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+> Este comando gera as pastas `ios/` e `android/` com o código nativo necessário para compilar o app.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 3. Executar o aplicativo
 
-## Join the community
+```bash
+# iOS (simulador)
+npx expo run:ios
 
-Join our community of developers creating universal apps.
+# Android (emulador)
+npx expo run:android
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## Estrutura do projeto
+
+```
+poke/
+├── app/                        # Rotas (Expo Router)
+│   ├── _layout.tsx             # Layout raiz com providers
+│   ├── index.tsx               # Redireciona para /pokedex
+│   ├── (tabs)/                 # Grupo de abas
+│   │   ├── pokedex.tsx         # Tela da Pokédex
+│   │   ├── favorite.tsx        # Tela de favoritos
+│   │   └── map.tsx             # Tela do mapa
+│   └── pokemon/
+│       └── [pokemonName].tsx   # Detalhes de um Pokémon
+├── src/
+│   ├── api/                    # Integração com a PokéAPI v2
+│   ├── components/             # Componentes reutilizáveis
+│   ├── contexts/               # FavoritesContext (AsyncStorage)
+│   ├── features/               # Lógica por funcionalidade (hooks)
+│   ├── hooks/                  # Hooks genéricos
+│   └── utils/                  # Funções utilitárias
+├── assets/                     # Ícones e imagens do app
+├── app.json                    # Configuração do Expo
+└── tsconfig.json               # Configuração TypeScript
+```
+
+---
+
+## API
+
+O aplicativo consome a [PokéAPI v2](https://pokeapi.co/api/v2) — pública e sem necessidade de autenticação. Não é necessário configurar variáveis de ambiente.
+
+---
+
+## Lint
+
+```bash
+npm run lint
+```
