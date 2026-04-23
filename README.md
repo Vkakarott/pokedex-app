@@ -104,14 +104,14 @@ O aplicativo consome a [PokéAPI v2](https://pokeapi.co/api/v2) — pública e s
 
 ## Decisões técnicas
 
-> Substitua cada item abaixo pela sua justificativa real.
-
-- **Expo Router (file-based routing):** ...
-- **Axios:** ...
-- **AsyncStorage para favoritos:** ...
-- **react-native-maps + expo-location:** ...
-- **react-native-image-colors + expo-blur:** ...
-- **Arquitetura por feature (`src/features/`):** ...
+- **Expo Router (file-based routing):** escolha natural por ser o padrão do Expo. Para uma navegação em abas de baixa complexidade, adicionar o React Navigation manualmente geraria overhead desnecessário sem nenhum ganho prático.
+- **Axios:** preferência pessoal por ser a biblioteca mais consolidada para requisições HTTP. Como as chamadas à PokéAPI são simples, não havia necessidade de nada mais sofisticado.
+- **AsyncStorage:** opção mais comum para persistência local em React Native e suficiente para o escopo do projeto — armazenar uma lista de favoritos não exige estrutura relacional nem alta performance de leitura.
+- **react-native-maps + expo-location:** após avaliação, `react-native-maps` atendia todos os requisitos com menor complexidade em relação a alternativas como Mapbox. O `expo-location` foi escolha óbvia pelo suporte nativo ao Expo e simplicidade de integração.
+- **react-native-image-colors + expo-blur:** decisão puramente estética, para gerar cores de destaque dinâmicas a partir da imagem de cada Pokémon e aplicar efeito glassmorphism nos cards.
+- **Arquitetura por feature (`src/features/`):** escolha que surgiu organicamente ao longo do desenvolvimento, agrupando lógica, hooks e utilitários por funcionalidade em vez de por tipo de arquivo.
+- **Cache do catálogo em memória:** quando busca ou filtros estão ativos, o app busca todos os Pokémon uma única vez e armazena o resultado em `useRef`. Isso evita requisições repetidas a cada mudança de filtro, ao custo de um carregamento inicial maior — trade-off intencional para garantir responsividade na filtragem.
+- **`expo-image` no lugar do `Image` do React Native:** melhor cache automático, suporte a formatos modernos e performance superior no carregamento de imagens remotas.
 
 ---
 
