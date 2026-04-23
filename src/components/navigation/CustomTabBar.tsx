@@ -4,6 +4,7 @@ import { Image, Pressable, StyleSheet, Text, View, useWindowDimensions } from "r
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 
+import { getTabBarRouteConfig } from "@/src/components/navigation/tabBarConfig";
 import { createCurvedTabBarPath } from "../../utils/navigation/createCurvedTabBarPath";
 
 const ACTIVE_COLOR = "#DD2323";
@@ -52,9 +53,10 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               : typeof options.title === "string"
                 ? options.title
                 : route.name;
+          const routeConfig = getTabBarRouteConfig(route.name);
 
           const color = isFocused ? ACTIVE_COLOR : INACTIVE_COLOR;
-          const isCenter = route.name === "pokedex";
+          const isCenter = routeConfig?.isCenter ?? false;
 
           return (
             <Pressable
@@ -73,11 +75,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
                   />
                 </View>
               ) : (
-                <Entypo
-                  name={route.name === "map" ? "map" : "heart"}
-                  size={24}
-                  color={color}
-                />
+                <Entypo name={routeConfig?.iconName ?? "dot-single"} size={24} color={color} />
               )}
 
               <Text style={[styles.label, { color }, isCenter && styles.centerLabel]}>

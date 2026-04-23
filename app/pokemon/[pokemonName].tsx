@@ -1,19 +1,16 @@
-import { getPokemonDetails } from "@/src/api/get-pokemon-details";
-import { PokemonDetailsResponse, PokemonListItem } from "@/src/api/types";
 import { PokemonDetailsHeader } from "@/src/components/pokemon-details/PokemonDetailsHeader";
 import { PokemonDetailsStatRow } from "@/src/components/pokemon-details/PokemonDetailsStatRow";
 import { PokemonDetailsSummaryItem } from "@/src/components/pokemon-details/PokemonDetailsSummaryItem";
-import { useFavorites } from "@/src/contexts/FavoritesContext";
+import { usePokemonDetailsScreen } from "@/src/features/pokemon-details/usePokemonDetailsScreen";
 import {
   DEFAULT_POKEMON_DETAILS_ACCENT,
   formatMetricValue,
   formatPokemonName,
   formatStatName,
-  pickDominantColor,
 } from "@/src/utils/pokemon-details";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -21,135 +18,25 @@ import {
   Text,
   View,
 } from "react-native";
-import { getColors } from "react-native-image-colors";
 
 export default function PokemonDetailsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ pokemonName?: string | string[] }>();
-  const { isFavorite, toggleFavorite } = useFavorites();
 
   const pokemonName = useMemo(() => {
     const value = params.pokemonName;
     return Array.isArray(value) ? value[0] ?? "" : value ?? "";
   }, [params.pokemonName]);
-
-  const [pokemon, setPokemon] = useState<PokemonDetailsResponse | null>(null);
-  const [accentColor, setAccentColor] = useState<string | null>(null);
-  const [isDetailsLoading, setIsDetailsLoading] = useState(true);
-  const [isAccentLoading, setIsAccentLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadPokemonDetails() {
-        if (!pokemonName) {
-          if (isMounted) {
-            setErrorMessage("Pokemon invalido.");
-            setIsDetailsLoading(false);
-            setIsAccentLoading(false);
-          }
-        return;
-      }
-
-      try {
-        setErrorMessage("");
-        setIsDetailsLoading(true);
-
-        const response = await getPokemonDetails(pokemonName);
-
-        if (!isMounted) {
-          return;
-        }
-
-        setPokemon(response);
-      } catch {
-        if (!isMounted) {
-          return;
-        }
-
-        setErrorMessage("Nao foi possivel carregar os detalhes do pokemon.");
-      } finally {
-        if (isMounted) {
-          setIsDetailsLoading(false);
-        }
-      }
-    }
-
-    loadPokemonDetails();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [pokemonName]);
-
-  const artworkUrl =
-    pokemon?.sprites.other?.["official-artwork"]?.front_default ??
-    pokemon?.sprites.front_default ??
-    null;
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadAccentColor() {
-      if (!artworkUrl) {
-        if (isMounted) {
-          setAccentColor(DEFAULT_POKEMON_DETAILS_ACCENT);
-          setIsAccentLoading(false);
-        }
-        return;
-      }
-
-      try {
-        if (isMounted) {
-          setIsAccentLoading(true);
-        }
-
-        const result = await getColors(artworkUrl, {
-          fallback: DEFAULT_POKEMON_DETAILS_ACCENT,
-          cache: true,
-          key: artworkUrl,
-        });
-
-        if (!isMounted) {
-          return;
-        }
-
-        setAccentColor(pickDominantColor(result));
-      } catch {
-        if (isMounted) {
-          setAccentColor(DEFAULT_POKEMON_DETAILS_ACCENT);
-        }
-      } finally {
-        if (isMounted) {
-          setIsAccentLoading(false);
-        }
-      }
-    }
-
-    loadAccentColor();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [artworkUrl]);
-
-  const isCurrentFavorite = pokemon ? isFavorite(pokemon.name) : false;
+  const {
+    accentColor,
+    artworkUrl,
+    errorMessage,
+    handleToggleFavorite,
+    isCurrentFavorite,
+    isLoading,
+    pokemon,
+  } = usePokemonDetailsScreen({ pokemonName });
   const screenAccentColor = accentColor ?? DEFAULT_POKEMON_DETAILS_ACCENT;
-  const isLoading = isDetailsLoading || isAccentLoading;
-
-  async function handleToggleFavorite() {
-    if (!pokemon) {
-      return;
-    }
-
-    const favoriteItem: PokemonListItem = {
-      name: pokemon.name,
-      url: `https://pokeapi.co/api/v2/pokemon/${pokemon.id}/`,
-    };
-
-    await toggleFavorite(favoriteItem);
-  }
 
   if (isLoading) {
     return (

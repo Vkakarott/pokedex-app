@@ -1,9 +1,14 @@
 import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { getColors } from "react-native-image-colors";
+
+import { useDominantColor } from "@/src/hooks/useDominantColor";
+import {
+  DEFAULT_POKEMON_ACCENT,
+  formatPokemonName,
+  withAlpha,
+} from "@/src/utils/pokemon";
 
 type PokeCardProps = {
   imageUrl: string;
@@ -18,37 +23,9 @@ export default function PokeCard({
   name,
   onToggleFavorite,
 }: PokeCardProps) {
-  const [accentColor, setAccentColor] = useState("#2A2A2A");
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadCardColors() {
-      try {
-        const result = await getColors(imageUrl, {
-          fallback: "#2A2A2A",
-          cache: true,
-          key: imageUrl,
-        });
-
-        if (!isMounted) {
-          return;
-        }
-
-        setAccentColor(pickDominantColor(result));
-      } catch {
-        if (isMounted) {
-          setAccentColor("#2A2A2A");
-        }
-      }
-    }
-
-    loadCardColors();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [imageUrl]);
+  const { color: accentColor } = useDominantColor(imageUrl, {
+    fallbackColor: DEFAULT_POKEMON_ACCENT,
+  });
 
   return (
     <View style={[styles.card, { backgroundColor: withAlpha(accentColor, 0.12) }]}>
@@ -119,47 +96,3 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
 });
-
-function formatPokemonName(name: string) {
-  if (!name) {
-    return "";
-  }
-
-  return `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-}
-
-function pickDominantColor(result: Awaited<ReturnType<typeof getColors>>) {
-  switch (result.platform) {
-    case "android":
-      return (
-        result.dominant ??
-        result.vibrant ??
-        result.average ??
-        result.lightVibrant ??
-        "#2A2A2A"
-      );
-    case "ios":
-      return result.background ?? result.primary ?? result.detail ?? "#2A2A2A";
-    case "web":
-      return result.dominant ?? result.vibrant ?? result.lightVibrant ?? "#2A2A2A";
-    default:
-      return "#2A2A2A";
-  }
-}
-
-function withAlpha(hexColor: string, alpha: number) {
-  const normalized = hexColor.replace("#", "");
-  const safeHex =
-    normalized.length === 3
-      ? normalized
-          .split("")
-          .map((character) => `${character}${character}`)
-          .join("")
-      : normalized.slice(0, 6);
-
-  const red = Number.parseInt(safeHex.slice(0, 2), 16);
-  const green = Number.parseInt(safeHex.slice(2, 4), 16);
-  const blue = Number.parseInt(safeHex.slice(4, 6), 16);
-
-  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-}
