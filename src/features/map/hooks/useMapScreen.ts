@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 import * as Location from "expo-location";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MapView, { Region } from "react-native-maps";
@@ -13,9 +13,11 @@ import { generateRandomPins } from "@/src/features/map/utils/generate-random-pin
 const RANDOM_PIN_COUNT = 8;
 const RANDOM_PIN_RADIUS_IN_KM = 1.2;
 const DEFAULT_REGION_DELTA = 0.025;
-const FOCUSED_PIN_REGION_DELTA = 0.008;
+const FOCUSED_PIN_REGION_DELTA = 0.0035;
+const FOCUS_ANIMATION_DELAY_MS = 250;
 
 export function useMapScreen() {
+  const isFocused = useIsFocused();
   const mapRef = useRef<MapView | null>(null);
   const [currentLocation, setCurrentLocation] = useState<MapCoordinate | null>(null);
   const [pins, setPins] = useState<MapPin[]>([]);
@@ -69,17 +71,24 @@ export function useMapScreen() {
     void loadCurrentLocation();
   }, [loadCurrentLocation]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!isMapReady || pins.length === 0) {
+  useEffect(() => {
+    if (!isFocused || !isMapReady || pins.length === 0) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      const randomPin = pins[Math.floor(Math.random() * pins.length)];
+
+      if (!randomPin) {
         return;
       }
 
-      const randomPin = pins[Math.floor(Math.random() * pins.length)];
       setSelectedPinId(randomPin.id);
       mapRef.current?.animateToRegion(createFocusedPinRegion(randomPin), 700);
-    }, [isMapReady, pins])
-  );
+    }, FOCUS_ANIMATION_DELAY_MS);
+
+    return () => clearTimeout(timeout);
+  }, [isFocused, isMapReady, pins]);
 
   const initialRegion = currentLocation
     ? createUserRegion(currentLocation)

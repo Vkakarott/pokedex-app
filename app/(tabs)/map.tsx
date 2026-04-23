@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
     color: "#F5F5F5",
   },
   pinContainer: {
-    width: 44,
-    height: 54,
+    width: 32,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
   },
