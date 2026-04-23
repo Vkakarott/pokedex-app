@@ -17,6 +17,29 @@ export type GetPokemonListParams = {
 
 export type PokemonCatalogResponse = PokemonListItem[];
 
+export type NamedApiResource = {
+  name: string;
+  url: string;
+};
+
+export type NamedApiResourceListResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: NamedApiResource[];
+};
+
+export type PokemonTypeFilterResponse = {
+  pokemon: {
+    pokemon: NamedApiResource;
+    slot: number;
+  }[];
+};
+
+export type PokemonGenerationFilterResponse = {
+  pokemon_species: NamedApiResource[];
+};
+
 export type PokemonTypeSlot = {
   slot: number;
   type: {

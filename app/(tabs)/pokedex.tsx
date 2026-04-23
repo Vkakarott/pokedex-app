@@ -1,10 +1,20 @@
 import { getPokemonCatalog } from "@/src/api/get-catalog";
+import {
+  getPokemonGenerationFilter,
+  getPokemonGenerations,
+  getPokemonTypeFilter,
+  getPokemonTypes,
+} from "@/src/api/get-pokemon-filters";
 import { getPokemonList } from "@/src/api/get-list";
-import { PokemonListItem } from "@/src/api/types";
+import { NamedApiResource, PokemonListItem } from "@/src/api/types";
 import InputSearch from "@/src/components/InputSearch";
 import PokeCard from "@/src/components/PokeCard";
+import PokedexFilters, {
+  PokedexOrderOption,
+} from "@/src/components/PokedexFilters";
 import { useFavorites } from "@/src/contexts/FavoritesContext";
-import { getPokemonImageUrl } from "@/src/utils/pokemon";
+import { getPokemonIdFromUrl, getPokemonImageUrl } from "@/src/utils/pokemon";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -12,28 +22,46 @@ import {
   Text,
   View,
 } from "react-native";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const PAGE_SIZE = 20;
 const SEARCH_DELAY_MS = 450;
+const DEFAULT_ORDER: PokedexOrderOption = "id-asc";
 
 export default function PokedexScreen() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [pokemonList, setPokemonList] = useState<PokemonListItem[]>([]);
-  const [searchResults, setSearchResults] = useState<PokemonListItem[]>([]);
+  const [filteredResults, setFilteredResults] = useState<PokemonListItem[]>([]);
+  const [typeOptions, setTypeOptions] = useState<NamedApiResource[]>([]);
+  const [generationOptions, setGenerationOptions] = useState<NamedApiResource[]>(
+    []
+  );
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedGeneration, setSelectedGeneration] = useState<string | null>(
+    null
+  );
+  const [selectedOrder, setSelectedOrder] =
+    useState<PokedexOrderOption>(DEFAULT_ORDER);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isApplyingFilters, setIsApplyingFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const pokemonCatalogRef = useRef<PokemonListItem[] | null>(null);
+  const pokemonTypeMapRef = useRef<Map<string, Set<string>>>(new Map());
+  const pokemonGenerationMapRef = useRef<Map<string, Set<number>>>(new Map());
 
   const trimmedQuery = query.trim();
-  const isSearchActive = debouncedQuery.trim().length >= 2;
+  const normalizedQuery = debouncedQuery.trim().toLowerCase();
+  const isSearchActive = normalizedQuery.length >= 2;
+  const hasActiveFilters =
+    Boolean(selectedType) ||
+    Boolean(selectedGeneration) ||
+    selectedOrder !== DEFAULT_ORDER;
+  const isCatalogMode = isSearchActive || hasActiveFilters;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -86,13 +114,41 @@ export default function PokedexScreen() {
   useEffect(() => {
     let isMounted = true;
 
-    async function runSearch() {
-      const normalizedQuery = debouncedQuery.trim().toLowerCase();
+    async function loadFilterOptions() {
+      try {
+        const [types, generations] = await Promise.all([
+          getPokemonTypes(),
+          getPokemonGenerations(),
+        ]);
 
-      if (normalizedQuery.length < 2) {
+        if (!isMounted) {
+          return;
+        }
+
+        setTypeOptions(types);
+        setGenerationOptions(generations);
+      } catch {
         if (isMounted) {
-          setSearchResults([]);
-          setIsSearching(false);
+          setErrorMessage("Nao foi possivel carregar os filtros.");
+        }
+      }
+    }
+
+    loadFilterOptions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function applyFilters() {
+      if (!isCatalogMode) {
+        if (isMounted) {
+          setFilteredResults([]);
+          setIsApplyingFilters(false);
           setErrorMessage("");
         }
         return;
@@ -100,7 +156,7 @@ export default function PokedexScreen() {
 
       try {
         setErrorMessage("");
-        setIsSearching(true);
+        setIsApplyingFilters(true);
 
         if (!pokemonCatalogRef.current) {
           pokemonCatalogRef.current = await getPokemonCatalog();
@@ -110,38 +166,82 @@ export default function PokedexScreen() {
           return;
         }
 
-        const filteredResults = pokemonCatalogRef.current.filter((pokemon) =>
-          pokemon.name.includes(normalizedQuery)
+        let nextResults = [...pokemonCatalogRef.current];
+
+        if (selectedType) {
+          let pokemonNames = pokemonTypeMapRef.current.get(selectedType);
+
+          if (!pokemonNames) {
+            const response = await getPokemonTypeFilter(selectedType);
+            pokemonNames = new Set(
+              response.pokemon.map((item) => item.pokemon.name)
+            );
+            pokemonTypeMapRef.current.set(selectedType, pokemonNames);
+          }
+
+          nextResults = nextResults.filter((pokemon) => pokemonNames.has(pokemon.name));
+        }
+
+        if (selectedGeneration) {
+          let pokemonIds = pokemonGenerationMapRef.current.get(selectedGeneration);
+
+          if (!pokemonIds) {
+            const response = await getPokemonGenerationFilter(selectedGeneration);
+            pokemonIds = new Set(
+              response.pokemon_species.map((item) => getPokemonIdFromUrl(item.url))
+            );
+            pokemonGenerationMapRef.current.set(selectedGeneration, pokemonIds);
+          }
+
+          nextResults = nextResults.filter((pokemon) =>
+            pokemonIds.has(getPokemonIdFromUrl(pokemon.url))
+          );
+        }
+
+        if (normalizedQuery.length >= 2) {
+          nextResults = nextResults.filter((pokemon) =>
+            pokemon.name.includes(normalizedQuery)
+          );
+        }
+
+        nextResults.sort((current, next) =>
+          comparePokemon(current, next, selectedOrder)
         );
 
-        setSearchResults(filteredResults);
+        setFilteredResults(nextResults);
       } catch {
         if (!isMounted) {
           return;
         }
 
-        setErrorMessage("Nao foi possivel pesquisar pokemons.");
+        setErrorMessage("Nao foi possivel aplicar os filtros.");
       } finally {
         if (isMounted) {
-          setIsSearching(false);
+          setIsApplyingFilters(false);
         }
       }
     }
 
-    runSearch();
+    applyFilters();
 
     return () => {
       isMounted = false;
     };
-  }, [debouncedQuery]);
+  }, [
+    isCatalogMode,
+    normalizedQuery,
+    selectedGeneration,
+    selectedOrder,
+    selectedType,
+  ]);
 
   const visiblePokemon = useMemo(
-    () => (isSearchActive ? searchResults : pokemonList),
-    [isSearchActive, pokemonList, searchResults]
+    () => (isCatalogMode ? filteredResults : pokemonList),
+    [filteredResults, isCatalogMode, pokemonList]
   );
 
   async function handleLoadMore() {
-    if (isSearchActive || isLoadingMore || isInitialLoading || !hasMore) {
+    if (isCatalogMode || isLoadingMore || isInitialLoading || !hasMore) {
       return;
     }
 
@@ -167,6 +267,17 @@ export default function PokedexScreen() {
     <SafeAreaView edges={["top"]} style={styles.container}>
       <InputSearch value={query} onChangeText={setQuery} />
 
+      <PokedexFilters
+        generationOptions={generationOptions}
+        onSelectGeneration={setSelectedGeneration}
+        onSelectOrder={setSelectedOrder}
+        onSelectType={setSelectedType}
+        selectedGeneration={selectedGeneration}
+        selectedOrder={selectedOrder}
+        selectedType={selectedType}
+        typeOptions={typeOptions}
+      />
+
       {trimmedQuery.length === 1 ? (
         <Text style={styles.helperText}>
           Digite pelo menos 2 caracteres para pesquisar.
@@ -189,15 +300,15 @@ export default function PokedexScreen() {
           onEndReachedThreshold={0.4}
           onEndReached={handleLoadMore}
           ListEmptyComponent={
-            isSearching ? (
+            isApplyingFilters ? (
               <View style={styles.feedbackContainer}>
                 <ActivityIndicator color="#DD2323" />
-                <Text style={styles.feedbackText}>Pesquisando pokemons...</Text>
+                <Text style={styles.feedbackText}>Aplicando filtros...</Text>
               </View>
             ) : (
               <View style={styles.feedbackContainer}>
                 <Text style={styles.feedbackText}>
-                  Nenhum pokemon encontrado para essa pesquisa.
+                  Nenhum pokemon encontrado para essa combinacao.
                 </Text>
               </View>
             )
@@ -222,6 +333,27 @@ export default function PokedexScreen() {
       )}
     </SafeAreaView>
   );
+}
+
+function comparePokemon(
+  current: PokemonListItem,
+  next: PokemonListItem,
+  order: PokedexOrderOption
+) {
+  const currentId = getPokemonIdFromUrl(current.url);
+  const nextId = getPokemonIdFromUrl(next.url);
+
+  switch (order) {
+    case "id-desc":
+      return nextId - currentId;
+    case "name-asc":
+      return current.name.localeCompare(next.name);
+    case "name-desc":
+      return next.name.localeCompare(current.name);
+    case "id-asc":
+    default:
+      return currentId - nextId;
+  }
 }
 
 const styles = StyleSheet.create({
