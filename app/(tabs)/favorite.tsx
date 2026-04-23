@@ -6,7 +6,7 @@ import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from "reac
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FavoriteScreen() {
-  const { favorites, isLoading } = useFavorites();
+  const { favorites, isLoading, toggleFavorite } = useFavorites();
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
@@ -41,6 +41,7 @@ export default function FavoriteScreen() {
               <FavoritePokemonCard
                 imageUrl={getPokemonImageUrl(item.url)}
                 name={item.name}
+                onRemove={() => toggleFavorite(item)}
                 onPressDetails={() =>
                   router.push({
                     pathname: "/pokemon/[pokemonName]",

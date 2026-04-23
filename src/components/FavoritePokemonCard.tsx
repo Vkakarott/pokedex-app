@@ -13,12 +13,14 @@ type FavoritePokemonCardProps = {
   imageUrl: string;
   name: string;
   onPressDetails: () => void;
+  onRemove: () => void;
 };
 
 export default function FavoritePokemonCard({
   imageUrl,
   name,
   onPressDetails,
+  onRemove,
 }: FavoritePokemonCardProps) {
   const { color: accentColor } = useDominantColor(imageUrl, {
     fallbackColor: DEFAULT_POKEMON_ACCENT,
@@ -32,6 +34,11 @@ export default function FavoritePokemonCard({
           { backgroundColor: withAlpha(accentColor, 0.24) },
         ]}
       />
+
+      <Pressable onPress={onRemove} style={styles.removeButton}>
+        <AntDesign name="close-circle" size={20} color="#F5F5F5" />
+      </Pressable>
+
       <Image source={imageUrl} style={styles.image} contentFit="contain" />
 
       <View style={[styles.card, { backgroundColor: withAlpha(accentColor, 0.9) }]}>
@@ -121,6 +128,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionButton: {
+    padding: 2,
+  },
+  removeButton: {
+    position: "absolute",
+    top: 42,
+    left: 8,
+    zIndex: 3,
     padding: 2,
   },
 });
